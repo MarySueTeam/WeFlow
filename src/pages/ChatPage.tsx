@@ -3703,7 +3703,7 @@ function ChatPage(props: ChatPageProps) {
                 )}
               </div>
               <div className="header-actions">
-                {isGroupChatSession(currentSession.username) && (
+                {!standaloneSessionWindow && isGroupChatSession(currentSession.username) && (
                   <button
                     className="icon-btn group-analytics-btn"
                     onClick={handleGroupAnalytics}
@@ -3721,56 +3721,62 @@ function ChatPage(props: ChatPageProps) {
                     <Users size={18} />
                   </button>
                 )}
-                <button
-                  className={`icon-btn export-session-btn${isExportActionBusy ? ' exporting' : ''}`}
-                  onClick={handleExportCurrentSession}
-                  disabled={!currentSessionId || isExportActionBusy}
-                  title={isCurrentSessionExporting ? '导出中' : isPreparingExportDialog ? '正在准备导出模块' : '导出当前会话'}
-                >
-                  {isExportActionBusy ? (
-                    <Loader2 size={18} className="spin" />
-                  ) : (
-                    <Download size={18} />
-                  )}
-                </button>
-                <button
-                  className={`icon-btn batch-transcribe-btn${isBatchTranscribing ? ' transcribing' : ''}`}
-                  onClick={() => {
-                    if (isBatchTranscribing) {
-                      setShowBatchProgress(true)
-                    } else {
-                      handleBatchTranscribe()
-                    }
-                  }}
-                  disabled={!currentSessionId}
-                  title={isBatchTranscribing ? `批量转写中 (${batchTranscribeProgress.current}/${batchTranscribeProgress.total})，点击查看进度` : '批量语音转文字'}
-                >
-                  {isBatchTranscribing ? (
-                    <Loader2 size={18} className="spin" />
-                  ) : (
-                    <Mic size={18} />
-                  )}
-                </button>
-                <button
-                  className={`icon-btn batch-decrypt-btn${isBatchDecrypting ? ' transcribing' : ''}`}
-                  onClick={() => {
-                    if (isBatchDecrypting) {
-                      setShowBatchDecryptToast(true)
-                    } else {
-                      handleBatchDecrypt()
-                    }
-                  }}
-                  disabled={!currentSessionId}
-                  title={isBatchDecrypting
-                    ? `批量解密中 (${batchDecryptProgress.current}/${batchDecryptProgress.total})，点击查看进度`
-                    : '批量解密图片'}
-                >
-                  {isBatchDecrypting ? (
-                    <Loader2 size={18} className="spin" />
-                  ) : (
-                    <ImageIcon size={18} />
-                  )}
-                </button>
+                {!standaloneSessionWindow && (
+                  <button
+                    className={`icon-btn export-session-btn${isExportActionBusy ? ' exporting' : ''}`}
+                    onClick={handleExportCurrentSession}
+                    disabled={!currentSessionId || isExportActionBusy}
+                    title={isCurrentSessionExporting ? '导出中' : isPreparingExportDialog ? '正在准备导出模块' : '导出当前会话'}
+                  >
+                    {isExportActionBusy ? (
+                      <Loader2 size={18} className="spin" />
+                    ) : (
+                      <Download size={18} />
+                    )}
+                  </button>
+                )}
+                {!standaloneSessionWindow && (
+                  <button
+                    className={`icon-btn batch-transcribe-btn${isBatchTranscribing ? ' transcribing' : ''}`}
+                    onClick={() => {
+                      if (isBatchTranscribing) {
+                        setShowBatchProgress(true)
+                      } else {
+                        handleBatchTranscribe()
+                      }
+                    }}
+                    disabled={!currentSessionId}
+                    title={isBatchTranscribing ? `批量转写中 (${batchTranscribeProgress.current}/${batchTranscribeProgress.total})，点击查看进度` : '批量语音转文字'}
+                  >
+                    {isBatchTranscribing ? (
+                      <Loader2 size={18} className="spin" />
+                    ) : (
+                      <Mic size={18} />
+                    )}
+                  </button>
+                )}
+                {!standaloneSessionWindow && (
+                  <button
+                    className={`icon-btn batch-decrypt-btn${isBatchDecrypting ? ' transcribing' : ''}`}
+                    onClick={() => {
+                      if (isBatchDecrypting) {
+                        setShowBatchDecryptToast(true)
+                      } else {
+                        handleBatchDecrypt()
+                      }
+                    }}
+                    disabled={!currentSessionId}
+                    title={isBatchDecrypting
+                      ? `批量解密中 (${batchDecryptProgress.current}/${batchDecryptProgress.total})，点击查看进度`
+                      : '批量解密图片'}
+                  >
+                    {isBatchDecrypting ? (
+                      <Loader2 size={18} className="spin" />
+                    ) : (
+                      <ImageIcon size={18} />
+                    )}
+                  </button>
+                )}
                 <div className="jump-calendar-anchor" ref={jumpCalendarWrapRef}>
                   <button
                     className={`icon-btn jump-to-time-btn ${showJumpPopover ? 'active' : ''}`}
