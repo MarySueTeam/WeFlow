@@ -76,15 +76,32 @@ export class KeyServiceMac {
       
       const keyPtr = this.GetDbKey()
       if (!keyPtr) {
-        onStatus?.('获取失败：WeChat 未运行或无法附加', 2)
-        return { success: false, error: 'WeChat 未运行或无法附加' }
+        onStatus?.('获取失败：未知错误', 2)
+        return { success: false, error: '未知错误' }
       }
 
-      const key = this.koffi.decode(keyPtr, 'string')
+      const result = this.koffi.decode(keyPtr, 'string')
       this.FreeString(keyPtr)
 
+      // 检查是否是错误信息
+      if (result.startsWith('ERROR:')) {
+        const parts = result.split(':')
+        let errorMsg = '未知错误'
+        
+        if (parts[1] === 'PROCESS_NOT_FOUND') {
+          errorMsg = '微信进程未运行'
+        } else if (parts[1] === 'ATTACH_FAILED') {
+          errorMsg = `无法附加到进程 (${parts[2] || ''})\n可能需要授予调试权限：sudo /usr/sbin/DevToolsSecurity -enable`
+        } else if (parts[1] === 'SCAN_FAILED') {
+          errorMsg = '内存扫描失败'
+        }
+        
+        onStatus?.(errorMsg, 2)
+        return { success: false, error: errorMsg }
+      }
+
       onStatus?.('密钥获取成功', 1)
-      return { success: true, key }
+      return { success: true, key: result }
     } catch (e: any) {
       onStatus?.('获取失败: ' + e.message, 2)
       return { success: false, error: e.message }
