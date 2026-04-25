@@ -252,6 +252,11 @@ jobs:
       - release-windows-arm64
 
     steps:
+      - name: Check out git repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
       - name: Generate release notes with platform download links
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
